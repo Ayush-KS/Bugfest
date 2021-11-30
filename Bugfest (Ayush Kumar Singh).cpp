@@ -1,95 +1,109 @@
-// Always remember that you are absolutely unique, just like everyone else!
+/**
+ * The Linear Queue is a data structure used for holding a sequence of
+ * values, which can be added to the end line (enqueue), removed from
+ * head of the line (dequeue) and displayed.
+ * Values can be added by increasing the `rear` variable by 1 (which points to
+ * the end of the array), then assigning a new value to `rear`'s element of the
+ * array.
+ *
+ * Values can be removed by increasing the `front` variable by 1 (which points
+ * to the first of the array), so it cannot be reached anymore.
+ */
+#include <array>     /// for std::array
+#include <iostream>  /// for io operations
 
-#include <iostream>
-#include <vector>
-using namespace std;
+constexpr uint16_t max_size{10};  ///< Maximum size of the queue
 
+namespace data_structures {
+namespace queue_using_array {
 
-// DEBUGGING SECTION
-void __print(int x) {cerr << x;}
-void __print(long long x) {cerr << x;}
-void __print(double x) {cerr << x;}
-void __print(long double x) {cerr << x;}
-void __print(char x) {cerr << '\'' << x << '\'';}
-void __print(const string &x) {cerr << '\"' << x << '\"';}
-void __print(bool x) {cerr << (x ? "true" : "false");}
-template<typename T, typename V>
-void __print(const pair<T, V> &x) {cerr << '{'; __print(x.first); cerr << ','; __print(x.second); cerr << '}';}
-template<typename T>
-void __print(const T &x) {int f = 0; cerr << '{'; for (auto &i : x) cerr << (f++ ? "," : ""), __print(i); cerr << "}";}
-void _print() {cerr << "]\n";}
-template <typename T, typename... V>
-void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v...);}
+class Queue_Array {
+public:
+    void enqueue(const int16_t&);  ///< Add element to the first of the queue
+    std::pair<bool, int> dequeue();                 ///< Delete element from back of the queue
+    void display() const;          ///< Show all saved data
+private:
+    int8_t front{-1};                     ///< Index of head of the array
+    int8_t rear{ -1};                     ///< Index of tail of the array
+    std::array<int16_t, max_size> arr{};  ///< All stored data
+};
 
-
-#define fastio  ios_base::sync_with_stdio(false);cin.tie(NULL)
-#define debug(x...) cerr << "[" << #x << "] = ["; _print(x)
-
-
-#define MOD     1000000007
-#define INF     3e18
-#define pb      push_back
-#define endl    '\n' // Remove if interactive
-#define ff      first
-#define ss      second
-#define FOR(i, a, b)   for(int i = a; i < b; i++)
-
-
-//#include <algorithm>
-//#include <cstring>
-//#include <map>
-//#include <set>
-//#include <queue>
-//#include <stack>
-//#include <math.h>
-
-//#include <bits/stdc++.h>
-
-#define int     long long
-#define pii     pair<int, int>
-#define vi      vector<int>
-#define vvi     vector<vi>
-#define vpii    vector<pii>
-#define all(x)  x.begin(), x.end()
-
-int power(int x, int y) {
-	int ans = 1; x %= MOD;
-	while (y) {
-		if (y & 1)
-			ans = (x * ans) % MOD;
-		x = (x * x) % MOD;
-		y >>= 1;
-	}
-	return ans;
+/**
+ * @brief Adds new element to the end of the queue
+ * @param ele to be added to the end of the queue
+ */
+void Queue_Array::enqueue(const int16_t& ele) {
+    if (rear == arr.size() - 1) {
+        std::cout << "\nStack is full";
+    } else if (front == -1 && rear == -1) {
+        front = 0;
+        rear = 0;
+        arr[rear] = ele;
+    } else if (rear < arr.size()) {
+        ++rear;
+        arr[rear] = ele;
+    }
 }
 
+/**
+ * @brief Remove element that is located at the first of the queue
+ * @returns pair of boolean and integer: boolean represening if queue has data and integer is data that is deleted if queue is not empty
+ */
+std::pair<bool, int> Queue_Array::dequeue() {
+    int8_t d{0};
+    if (front == -1) {
+        std::cout << "\nstack is empty ";
+        return {false, -1};
+    } else if (front == rear) {
+        d = arr.at(front);
+        front = rear = -1;
+    } else {
+        d = arr.at(front++);
+    }
 
-
-
-// comparator(A, B) -> should return true if A needs to come before B!
-// ALWAYS RETURN FALSE IF A == B
-
-// USE INTEGERS TO REDUCE RUNTIME!
-
-
-
-void solve() {
-
+    return {true, d};
 }
 
+/**
+ * @brief Utility function to show all elements in the queue
+ */
+void Queue_Array::display() const {
+    if (front == -1) {
+        std::cout << "\nStack is empty";
+    } else {
+        for (int16_t i{front}; i <= rear; ++i) std::cout << arr.at(i) << " ";
+    }
+}
 
+}  // namespace queue_using_array
+}  // namespace data_structures
 
-int32_t main() {
-#ifndef ONLINE_JUDGE
-	freopen("input.txt", "r", stdin);
-	// freopen("error.txt", "w", stderr);
-	freopen("output.txt", "w", stdout);
-#endif
+int main() {
+    int op {0}, data {0};
+    data_structures::queue_using_array::Queue_Array ob;
 
-	fastio;
-	int t = 1;
-	cin >> t;
-	while (t--) {
-		solve();
-	}
+    std::cout << "1. enqueue(Insertion) ";
+    std::cout << "\n2. dequeue(Deletion)";
+    std::cout << "\n3. Display";
+    std::cout << "\n4. Exit";
+    while (true) {
+        std::cout << "\nEnter your choice ";
+        std::cin >> op;
+        if (op == 1) {
+            std::cout << "Enter data  ";
+            std::cin >> data;
+            ob.enqueue(data);
+        } else if (op == 2) {
+            std::pair<bool, int> ret = ob.dequeue();
+            if(ret.first)
+                std::cout << "\ndequeue element is:\t" << ret.second;
+        } else if (op == 3) {
+            ob.display();
+        } else if (op == 4) {
+            break;
+        } else {
+            std::cout << "\nWrong choice" << std::endl;
+            break;
+        }
+    }
 }
